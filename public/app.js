@@ -63,20 +63,13 @@ socket.on('admin:loginResult', (res) => {
   if (res.ok) {
     isAdmin = true;
     errorEl.classList.remove('show');
-    // Activar controles de admin en pantalla final por si llegan ahí
-    revealFinalAdminControls();
     showScreen('adminPanel');
   } else {
     errorEl.classList.add('show');
   }
 });
 
-function revealFinalAdminControls(){
-  const block = document.getElementById('finalAdminControls');
-  if (block) block.style.display = 'block';
-}
-
-// Botón de reinicio desde pantalla final (solo admin)
+// Botón de reinicio desde pantalla final (por si un participante admin la ve)
 const resetFromFinalBtn = document.getElementById('resetFromFinalBtn');
 if (resetFromFinalBtn) {
   resetFromFinalBtn.addEventListener('click', () => {
@@ -200,9 +193,10 @@ function clearAllCards(){
  * ========================================================================== */
 socket.on('state:finalized', () => {
   if (isAdmin) {
-    document.getElementById('adminStatusMessage').textContent = '✅ Experiencia finalizada — puedes reiniciar si lo necesitas.';
-    revealFinalAdminControls();
-    showScreen('final');
+    // El admin se queda en su panel — nunca va a la pantalla blanca final.
+    // Actualiza el mensaje de estado y asegura que el botón Reiniciar esté visible.
+    document.getElementById('adminStatusMessage').textContent = '✅ Experiencia finalizada. Presiona Reiniciar para volver a empezar.';
+    showScreen('adminPanel');
   } else {
     showScreen('final');
   }
