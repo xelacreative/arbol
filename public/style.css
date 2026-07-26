@@ -227,16 +227,49 @@ button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B
 ============================================================================= */
 #screen-final{
   display:none;
-  align-items:center; justify-content:center;
-  min-height:100vh; background:#FFFFFF; padding:40px 24px;
+  flex-direction:column;
+  min-height:100vh;
+  background:#FFFFFF;
 }
 #screen-final.active{ display:flex; }
-.final-content{ max-width:620px; text-align:center; opacity:0; animation:fadeInFinal 2.2s ease forwards; }
+
+/* Barra de control del admin — fija en la parte superior, solo visible para admin */
+.final-admin-bar{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:none; /* se muestra por JS solo al admin */
+  align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;
+  background:rgba(74,58,34,0.92);
+  backdrop-filter:blur(8px);
+  padding:10px 20px;
+  color:#F3ECDD; font-size:13px; font-weight:600;
+}
+.final-admin-bar .ghost{
+  border-color:rgba(243,236,221,0.5); color:#F3ECDD; font-size:12px;
+}
+.final-admin-bar .ghost:hover{
+  background:rgba(243,236,221,0.15); border-color:#F3ECDD;
+}
+
+/* Capa de mariposas en pantalla final (cubre toda la ventana) */
+.final-ambient{
+  position:fixed; inset:0; pointer-events:none; z-index:10;
+  overflow:hidden;
+}
+
+/* Contenido central del mensaje final */
+.final-content{
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:80px 32px 40px; /* 80px arriba para dejar espacio a la barra admin */
+  text-align:center; max-width:680px; margin:0 auto;
+  opacity:0; animation:fadeInFinal 2.2s ease forwards;
+}
 .final-content p{
-  font-size:19px; line-height:1.75; color:var(--text-brown); font-weight:500;
+  font-size:19px; line-height:1.8; color:var(--text-brown); font-weight:500;
 }
-.final-content .ghost{
-  border-color:rgba(74,58,34,0.3); color:var(--text-mute); font-size:12px;
+.final-butterfly-btn{
+  margin-top:36px; border-color:rgba(74,58,34,0.3); color:var(--text-mute);
 }
-.final-content .ghost:hover{ color:var(--text-brown); border-color:rgba(74,58,34,0.6); }
+.final-butterfly-btn:hover{ color:var(--text-brown); border-color:rgba(74,58,34,0.6); }
+
 @keyframes fadeInFinal{ to{ opacity:1; } }
