@@ -1,0 +1,234 @@
+/* =============================================================================
+   VARIABLES Y BASE
+============================================================================= */
+:root{
+  --bg:#F3ECDD;
+  --leaf:#2FAE63;
+  --fruit:#E8792B;
+  --water:#3AA9D6;
+  --root:#8A5A2B;
+  --text-dark:#233024;
+  --text-brown:#4A3A22;
+  --text-mute:rgba(40,35,25,0.55);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; }
+body{
+  background:var(--bg);
+  font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+  color:var(--text-dark);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* =============================================================================
+   SISTEMA DE PANTALLAS (una sola app, distintas vistas)
+============================================================================= */
+.screen{ display:none; min-height:100vh; }
+.screen.active{ display:block; }
+
+/* =============================================================================
+   LANDING / LOGIN ADMIN
+============================================================================= */
+#screen-landing, #screen-admin-login{
+  display:none;
+  align-items:center; justify-content:center;
+  min-height:100vh; padding:20px;
+}
+#screen-landing.active, #screen-admin-login.active{ display:flex; }
+
+.landing-card{
+  background:#FFFFFF;
+  border-radius:18px;
+  padding:38px 30px;
+  max-width:360px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 12px 34px rgba(74,58,34,0.18);
+}
+.landing-card h1{ font-size:22px; color:var(--text-brown); margin-bottom:8px; }
+.landing-card .subtitle{ font-size:13px; color:var(--text-mute); margin-bottom:22px; line-height:1.5; }
+
+.landing-card input[type="text"],
+.landing-card input[type="password"]{
+  width:100%; padding:12px 14px; margin-bottom:12px;
+  border-radius:10px; border:1px solid rgba(74,58,34,0.2);
+  font-size:14px; outline:none; background:#FAF7F0;
+}
+.landing-card input:focus{ border-color:rgba(74,58,34,0.5); }
+
+.btn-primary{
+  width:100%; padding:12px; border:none; border-radius:10px;
+  background:var(--text-brown); color:#F3ECDD;
+  font-weight:700; font-size:14px; cursor:pointer; margin-top:2px;
+}
+.btn-primary:hover{ opacity:0.9; }
+.btn-primary.small{ width:auto; padding:9px 18px; font-size:12.5px; }
+
+.link-btn{
+  display:block; width:100%; background:none; border:none;
+  color:var(--text-mute); font-size:12px; margin-top:14px; cursor:pointer;
+  text-decoration:underline;
+}
+.link-btn:hover{ color:var(--text-brown); }
+
+.error-msg{
+  display:none; color:#C0392B; font-size:12px; margin-top:-4px; margin-bottom:8px;
+}
+.error-msg.show{ display:block; }
+
+/* =============================================================================
+   CABECERA DEL ÁRBOL (participante y admin)
+============================================================================= */
+.tree-header{ text-align:center; padding:26px 20px 4px; }
+.tree-header h2{ font-size:20px; font-weight:700; color:var(--text-brown); }
+.tree-header p{ margin-top:6px; font-size:12.5px; color:var(--text-mute); }
+
+/* =============================================================================
+   ESCENARIO DEL ÁRBOL
+============================================================================= */
+.stage-wrap{ display:flex; justify-content:center; margin-top:14px; padding:0 16px; }
+.stage{
+  position:relative;
+  width:min(430px, 100%);
+  aspect-ratio:1023/1537;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(74,58,34,0.18);
+}
+.stage img.base{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  animation:sway 9s ease-in-out infinite;
+  transform-origin:50% 85%;
+}
+@keyframes sway{
+  0%,100%{ transform:rotate(-0.35deg) scale(1.01); }
+  50%{ transform:rotate(0.35deg) scale(1.01); }
+}
+
+.overlay{ position:absolute; inset:0; pointer-events:none; }
+.ambient-layer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3; }
+
+/* ---- tarjetas de respuestas ---- */
+.card{
+  position:absolute;
+  background:#FFFFFF;
+  color:var(--text-dark);
+  font-size:9.5px;
+  font-weight:700;
+  line-height:1.2;
+  padding:5px 7px;
+  max-width:92px;
+  text-align:center;
+  box-shadow:0 3px 8px rgba(0,0,0,0.3);
+  opacity:0;
+  transform:translateY(8px) scale(0.85);
+  z-index:4;
+}
+.card.show{ animation:riseIn .6s cubic-bezier(.22,.9,.3,1) forwards; }
+@keyframes riseIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+
+.card.leaf-card{ border-radius:4px; border:2px solid var(--leaf); }
+.card.root-card{ border-radius:4px; border:2px solid var(--root); }
+.card.fruit-card{
+  border-radius:50%; border:2px solid var(--fruit);
+  width:56px; height:56px; max-width:56px;
+  display:flex; align-items:center; justify-content:center; padding:3px;
+}
+.card.water-card{ border-radius:9px 9px 9px 2px; border:2px solid var(--water); max-width:86px; }
+.card.water-card::after{
+  content:''; position:absolute; left:7px; bottom:-6px;
+  width:0; height:0;
+  border-left:5px solid transparent; border-right:5px solid transparent;
+  border-top:7px solid var(--water);
+}
+
+/* ---- hojas cayendo ---- */
+.falling-leaf{
+  position:absolute; top:0; left:0; font-size:15px;
+  opacity:0;
+  will-change:transform;
+}
+
+/* ---- mariposa ---- */
+.butterfly{
+  position:absolute; font-size:20px;
+  will-change:transform;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+.butterfly .wing-flap{ display:inline-block; animation:flap 0.35s ease-in-out infinite alternate; }
+@keyframes flap{ from{ transform:scaleX(1); } to{ transform:scaleX(0.72); } }
+.butterfly.resting .wing-flap{ animation-duration:0.9s; }
+
+/* =============================================================================
+   CONTROLES DEL PARTICIPANTE
+============================================================================= */
+.controls{ max-width:430px; margin:22px auto 40px; padding:0 18px; }
+.round-question{ text-align:center; font-size:13.5px; color:var(--text-brown); font-weight:600; margin-bottom:12px; }
+
+.input-row{ display:flex; gap:8px; }
+.input-row input[type="text"]{
+  flex:1; padding:11px 14px; border-radius:10px;
+  border:1px solid rgba(74,58,34,0.25);
+  background:#FFFFFF; color:var(--text-dark); font-size:14px; outline:none;
+}
+.input-row input:focus{ border-color:rgba(74,58,34,0.5); }
+
+button.send{
+  padding:11px 18px; border-radius:10px; border:none; cursor:pointer;
+  background:var(--text-brown); color:#F3ECDD; font-weight:700; font-size:13px;
+}
+button.send:hover{ opacity:0.88; }
+button.send:disabled{ opacity:0.4; cursor:not-allowed; }
+
+.butterfly-row{ text-align:center; margin-top:10px; }
+
+/* =============================================================================
+   PANEL DE ADMINISTRADOR
+============================================================================= */
+.admin-stats{
+  display:flex; justify-content:center; gap:18px; flex-wrap:wrap;
+  margin:18px auto 6px; font-size:11px; color:var(--text-mute);
+}
+.admin-stats b{ display:block; font-size:17px; color:var(--text-brown); text-align:center; }
+
+.admin-controls{ max-width:460px; margin:18px auto 44px; padding:0 18px; text-align:center; }
+
+.round-tabs{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:10px; }
+.tab{
+  padding:10px 16px; border-radius:100px; font-size:13px; font-weight:700;
+  border:1.5px solid transparent; cursor:pointer; opacity:0.55; transition:all .2s ease;
+  background:rgba(74,58,34,0.06); color:#4A3A22;
+}
+.tab.active{ opacity:1; }
+.tab[data-type="leaf"].active{ border-color:var(--leaf); color:var(--leaf); background:rgba(47,174,99,0.14); }
+.tab[data-type="fruit"].active{ border-color:var(--fruit); color:var(--fruit); background:rgba(232,121,43,0.14); }
+.tab[data-type="water"].active{ border-color:var(--water); color:var(--water); background:rgba(58,169,214,0.14); }
+.tab[data-type="root"].active{ border-color:var(--root); color:var(--root); background:rgba(138,90,43,0.14); }
+
+.hint{ font-size:11.5px; color:var(--text-mute); margin:10px 0 16px; line-height:1.5; }
+
+.secondary-row{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+button.ghost{
+  background:transparent; border:1px solid rgba(74,58,34,0.3); color:var(--text-mute);
+  padding:9px 15px; border-radius:100px; font-size:12.5px; cursor:pointer;
+}
+button.ghost:hover{ color:var(--text-brown); border-color:rgba(74,58,34,0.6); }
+button.ghost.danger{ border-color:rgba(192,57,43,0.4); color:#C0392B; }
+button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B; }
+
+/* =============================================================================
+   PANTALLA FINAL
+============================================================================= */
+#screen-final{
+  display:none;
+  align-items:center; justify-content:center;
+  min-height:100vh; background:#FFFFFF; padding:40px 24px;
+}
+#screen-final.active{ display:flex; }
+.final-content{ max-width:620px; text-align:center; opacity:0; animation:fadeInFinal 2.2s ease forwards; }
+.final-content p{
+  font-size:19px; line-height:1.75; color:var(--text-brown); font-weight:500;
+}
+@keyframes fadeInFinal{ to{ opacity:1; } }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuestro Árbol Familiar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ======================= PANTALLA: LANDING ======================= -->
+<section id="screen-landing" class="screen active">
+  <div class="landing-card">
+    <h1>Nuestro Árbol Familiar</h1>
+    <p class="subtitle">Una construcción colectiva, en tiempo real, para familias que crecen.</p>
+    <input type="text" id="nameInput" maxlength="40" placeholder="Escribe tu nombre">
+    <button class="btn-primary" id="joinBtn">Entrar</button>
+    <button class="link-btn" id="showAdminLoginBtn">¿Eres facilitador? Acceso administrador</button>
+  </div>
+</section>
+
+<!-- ======================= PANTALLA: LOGIN ADMIN ======================= -->
+<section id="screen-admin-login" class="screen">
+  <div class="landing-card">
+    <h1>Panel del facilitador</h1>
+    <p class="subtitle">Ingresa la clave de acceso para controlar la actividad.</p>
+    <input type="text" id="adminNameInput" maxlength="40" placeholder="Tu nombre (opcional)">
+    <input type="password" id="adminPasswordInput" placeholder="Clave de administrador">
+    <button class="btn-primary" id="adminLoginBtn">Entrar como administrador</button>
+    <div class="error-msg" id="adminLoginError">Clave incorrecta, intenta de nuevo.</div>
+    <button class="link-btn" id="backToLandingBtn">Volver</button>
+  </div>
+</section>
+
+<!-- ======================= PANTALLA: ÁRBOL (participante) ======================= -->
+<section id="screen-tree" class="screen">
+  <header class="tree-header">
+    <h2>Nuestro Árbol Familiar</h2>
+    <p id="statusMessage">Esperando al facilitador...</p>
+  </header>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <img class="base" id="treeImg" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
+      <div class="ambient-layer" id="ambientLayer"></div>
+      <div class="overlay" id="overlay"></div>
+    </div>
+  </div>
+
+  <div class="controls" id="participantControls" style="display:none;">
+    <div class="round-question" id="roundQuestion"></div>
+    <div class="input-row">
+      <input type="text" id="textInput" maxlength="55" placeholder="Escribe tu respuesta y presiona enviar...">
+      <button class="send" id="sendBtn">Enviar</button>
+    </div>
+  </div>
+
+  <div class="butterfly-row">
+    <button class="ghost" id="butterflyBtn">🦋 Soltar una mariposa</button>
+  </div>
+</section>
+
+<!-- ======================= PANTALLA: PANEL ADMIN ======================= -->
+<section id="screen-admin-panel" class="screen">
+  <header class="tree-header">
+    <h2>Panel del facilitador</h2>
+    <p id="adminStatusMessage">Controla el orden de las rondas para los participantes.</p>
+  </header>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stageAdmin">
+      <img class="base" id="treeImgAdmin" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
+      <div class="ambient-layer" id="ambientLayerAdmin"></div>
+      <div class="overlay" id="overlayAdmin"></div>
+    </div>
+  </div>
+
+  <div class="admin-stats">
+    <div><b id="statParticipants">0</b>conectados</div>
+    <div><b id="statLeaf">0</b>hojas</div>
+    <div><b id="statFruit">0</b>frutos</div>
+    <div><b id="statWater">0</b>acciones</div>
+    <div><b id="statRoot">0</b>raíces</div>
+  </div>
+
+  <div class="admin-controls">
+    <div class="round-tabs">
+      <div class="tab leaf" data-type="leaf">🍃 Hojas</div>
+      <div class="tab fruit" data-type="fruit">🍎 Frutos</div>
+      <div class="tab water" data-type="water">💧 Agua</div>
+      <div class="tab root" data-type="root">🌱 Raíces</div>
+    </div>
+    <p class="hint">Toca una ronda para activarla. Los participantes solo pueden responder la ronda que esté encendida.</p>
+    <div class="secondary-row">
+      <button class="ghost" id="closeRoundBtn">Cerrar ronda actual</button>
+      <button class="ghost" id="butterflyBtnAdmin">🦋 Soltar una mariposa</button>
+      <button class="ghost danger" id="resetBtn">Reiniciar actividad</button>
+      <button class="btn-primary small" id="finalizeBtn">Finalizar</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PANTALLA: FINAL ======================= -->
+<section id="screen-final" class="screen">
+  <div class="final-content">
+    <p id="finalText">
+      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces no reconocen,
+      con hojas que representan nuevos sueños y con la capacidad de seguir creciendo.
+      Nuestra tarea no es construir el árbol por ellas, sino ayudarles a descubrir
+      la fuerza que ya existe en su historia.
+    </p>
+  </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
