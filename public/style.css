@@ -117,9 +117,13 @@ body{
   color:var(--text-dark);
   font-size:9.5px;
   font-weight:700;
-  line-height:1.2;
+  line-height:1.3;
   padding:5px 7px;
-  max-width:92px;
+  max-width:110px;       /* límite máximo, nunca se pasa */
+  min-width:44px;
+  width:max-content;     /* crece con el texto hasta el max-width */
+  word-break:break-word; /* si una palabra es muy larga, la parte */
+  white-space:normal;    /* permite saltos de línea */
   text-align:center;
   box-shadow:0 3px 8px rgba(0,0,0,0.3);
   opacity:0;
@@ -136,7 +140,7 @@ body{
   width:56px; height:56px; max-width:56px;
   display:flex; align-items:center; justify-content:center; padding:3px;
 }
-.card.water-card{ border-radius:9px 9px 9px 2px; border:2px solid var(--water); max-width:86px; }
+.card.water-card{ border-radius:9px 9px 9px 2px; border:2px solid var(--water); }
 .card.water-card::after{
   content:''; position:absolute; left:7px; bottom:-6px;
   width:0; height:0;
@@ -231,4 +235,8 @@ button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B
 .final-content p{
   font-size:19px; line-height:1.75; color:var(--text-brown); font-weight:500;
 }
+.final-content .ghost{
+  border-color:rgba(74,58,34,0.3); color:var(--text-mute); font-size:12px;
+}
+.final-content .ghost:hover{ color:var(--text-brown); border-color:rgba(74,58,34,0.6); }
 @keyframes fadeInFinal{ to{ opacity:1; } }
