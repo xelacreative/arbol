@@ -58,8 +58,8 @@ const ROUND_INFO = {
     label: 'Agua',
     question: '¿Qué acción concreta permite que un sueño crezca?',
     zone: { x: [38, 62], y: [62, 76] },
-    height: 5.5,
-    fixedWidth: 9
+    height: 6.5,
+    fixedWidth: null // antes era fijo (9) y por eso el texto largo se desbordaba
   },
   root: {
     label: 'Raíces',
