@@ -14,8 +14,8 @@
     <h1>Nuestro Árbol Familiar</h1>
     <p class="subtitle">Una construcción colectiva, en tiempo real, para familias que crecen.</p>
     <input type="text" id="nameInput" maxlength="40" placeholder="Escribe tu nombre">
-    <button class="btn-primary" id="joinBtn">Entrar</button>
-    <button class="link-btn" id="showAdminLoginBtn">¿Eres facilitador? Acceso administrador</button>
+    <button type="button" class="btn-primary" id="joinBtn">Entrar</button>
+    <button type="button" class="link-btn" id="showAdminLoginBtn">¿Eres facilitador? Acceso administrador</button>
   </div>
 </section>
 
@@ -26,9 +26,9 @@
     <p class="subtitle">Ingresa la clave de acceso para controlar la actividad.</p>
     <input type="text" id="adminNameInput" maxlength="40" placeholder="Tu nombre (opcional)">
     <input type="password" id="adminPasswordInput" placeholder="Clave de administrador">
-    <button class="btn-primary" id="adminLoginBtn">Entrar como administrador</button>
+    <button type="button" class="btn-primary" id="adminLoginBtn">Entrar como administrador</button>
     <div class="error-msg" id="adminLoginError">Clave incorrecta, intenta de nuevo.</div>
-    <button class="link-btn" id="backToLandingBtn">Volver</button>
+    <button type="button" class="link-btn" id="backToLandingBtn">Volver</button>
   </div>
 </section>
 
@@ -38,25 +38,22 @@
     <h2>Nuestro Árbol Familiar</h2>
     <p id="statusMessage">Esperando al facilitador...</p>
   </header>
-
   <div class="stage-wrap">
     <div class="stage" id="stage">
-      <img class="base" id="treeImg" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
+      <img class="base" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
       <div class="ambient-layer" id="ambientLayer"></div>
       <div class="overlay" id="overlay"></div>
     </div>
   </div>
-
   <div class="controls" id="participantControls" style="display:none;">
     <div class="round-question" id="roundQuestion"></div>
     <div class="input-row">
-      <input type="text" id="textInput" maxlength="55" placeholder="Escribe tu respuesta y presiona enviar...">
-      <button class="send" id="sendBtn">Enviar</button>
+      <input type="text" id="textInput" maxlength="55" placeholder="Escribe tu respuesta...">
+      <button type="button" class="send" id="sendBtn">Enviar</button>
     </div>
   </div>
-
   <div class="butterfly-row">
-    <button class="ghost" id="butterflyBtn">🦋 Soltar una mariposa</button>
+    <button type="button" class="ghost" id="butterflyBtn">🦋 Soltar una mariposa</button>
   </div>
 </section>
 
@@ -66,15 +63,13 @@
     <h2>Panel del facilitador</h2>
     <p id="adminStatusMessage">Controla el orden de las rondas para los participantes.</p>
   </header>
-
   <div class="stage-wrap">
     <div class="stage" id="stageAdmin">
-      <img class="base" id="treeImgAdmin" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
+      <img class="base" src="assets/arbol-suenos-familiares.png" alt="Árbol de los Sueños Familiares">
       <div class="ambient-layer" id="ambientLayerAdmin"></div>
       <div class="overlay" id="overlayAdmin"></div>
     </div>
   </div>
-
   <div class="admin-stats">
     <div><b id="statParticipants">0</b>conectados</div>
     <div><b id="statLeaf">0</b>hojas</div>
@@ -82,37 +77,53 @@
     <div><b id="statWater">0</b>acciones</div>
     <div><b id="statRoot">0</b>raíces</div>
   </div>
-
   <div class="admin-controls">
     <div class="round-tabs">
-      <div class="tab leaf" data-type="leaf">🍃 Hojas</div>
-      <div class="tab fruit" data-type="fruit">🍎 Frutos</div>
-      <div class="tab water" data-type="water">💧 Agua</div>
-      <div class="tab root" data-type="root">🌱 Raíces</div>
+      <div class="tab" data-type="leaf">🍃 Hojas</div>
+      <div class="tab" data-type="fruit">🍎 Frutos</div>
+      <div class="tab" data-type="water">💧 Agua</div>
+      <div class="tab" data-type="root">🌱 Raíces</div>
     </div>
-    <p class="hint">Toca una ronda para activarla. Los participantes solo pueden responder la ronda que esté encendida.</p>
+    <p class="hint">Toca una ronda para activarla. Los participantes solo pueden responder la ronda encendida.</p>
     <div class="secondary-row">
-      <button class="ghost" id="closeRoundBtn">Cerrar ronda actual</button>
-      <button class="ghost" id="butterflyBtnAdmin">🦋 Soltar una mariposa</button>
-      <button class="ghost danger" id="resetBtn">Reiniciar actividad</button>
-      <button class="btn-primary small" id="finalizeBtn">Finalizar</button>
+      <button type="button" class="ghost" id="closeRoundBtn">Cerrar ronda</button>
+      <button type="button" class="ghost" id="butterflyBtnAdmin">🦋 Mariposa</button>
+      <button type="button" class="ghost danger" id="resetBtn">Reiniciar</button>
+      <button type="button" class="btn-primary small" id="finalizeBtn">Finalizar</button>
     </div>
   </div>
 </section>
 
 <!-- ======================= PANTALLA: FINAL ======================= -->
+<!--
+  Esta pantalla la ven TODOS (participantes y admin).
+  El admin ve además una barra fija de control en la parte superior.
+  Las mariposas siguen volando en el fondo para todos.
+-->
 <section id="screen-final" class="screen">
-  <div class="final-content">
-    <p id="finalText">
-      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces no reconocen,
-      con hojas que representan nuevos sueños y con la capacidad de seguir creciendo.
-      Nuestra tarea no es construir el árbol por ellas, sino ayudarles a descubrir
-      la fuerza que ya existe en su historia.
-    </p>
-    <div id="finalAdminControls" style="display:none; margin-top:40px;">
-      <button class="ghost" id="resetFromFinalBtn">↺ Reiniciar actividad</button>
-    </div>
+
+  <!-- Barra de control del admin — oculta para participantes normales -->
+  <div class="final-admin-bar" id="finalAdminBar" style="display:none;">
+    <span>✅ Experiencia finalizada</span>
+    <button type="button" class="ghost" id="resetFromFinalBtn">↺ Reiniciar actividad</button>
+    <button type="button" class="ghost" id="butterflyBtnFinal">🦋 Mariposa</button>
   </div>
+
+  <!-- Fondo de mariposas que siguen volando -->
+  <div class="final-ambient" id="finalAmbientLayer"></div>
+
+  <!-- Texto central -->
+  <div class="final-content">
+    <p>
+      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
+      no reconocen, con hojas que representan nuevos sueños y con la capacidad
+      de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
+      sino ayudarles a descubrir la fuerza que ya existe en su historia.
+    </p>
+    <!-- Botón de mariposa para todos los participantes en la pantalla final -->
+    <button type="button" class="ghost final-butterfly-btn" id="butterflyBtnFinalParticipant">🦋 Soltar una mariposa</button>
+  </div>
+
 </section>
 
 <script src="/socket.io/socket.io.js"></script>
