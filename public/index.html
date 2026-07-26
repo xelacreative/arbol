@@ -55,6 +55,16 @@
   <div class="butterfly-row">
     <button type="button" class="ghost" id="butterflyBtn">🦋 Soltar una mariposa</button>
   </div>
+  <!-- Mensaje final — oculto hasta que el admin finalice -->
+  <div class="final-message" id="finalMessageTree">
+    <p>
+      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
+      no reconocen, con hojas que representan nuevos sueños y con la capacidad
+      de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
+      sino ayudarles a descubrir la fuerza que ya existe en su historia.
+    </p>
+    <button type="button" class="ghost final-butterfly-btn" id="butterflyBtnTree">🦋 Soltar una mariposa</button>
+  </div>
 </section>
 
 <!-- ======================= PANTALLA: PANEL ADMIN ======================= -->
@@ -92,38 +102,19 @@
       <button type="button" class="btn-primary small" id="finalizeBtn">Finalizar</button>
     </div>
   </div>
-</section>
-
-<!-- ======================= PANTALLA: FINAL ======================= -->
-<!--
-  Esta pantalla la ven TODOS (participantes y admin).
-  El admin ve además una barra fija de control en la parte superior.
-  Las mariposas siguen volando en el fondo para todos.
--->
-<section id="screen-final" class="screen">
-
-  <!-- Barra de control del admin — oculta para participantes normales -->
-  <div class="final-admin-bar" id="finalAdminBar" style="display:none;">
-    <span>✅ Experiencia finalizada</span>
-    <button type="button" class="ghost" id="resetFromFinalBtn">↺ Reiniciar actividad</button>
-    <button type="button" class="ghost" id="butterflyBtnFinal">🦋 Mariposa</button>
-  </div>
-
-  <!-- Fondo de mariposas que siguen volando -->
-  <div class="final-ambient" id="finalAmbientLayer"></div>
-
-  <!-- Texto central -->
-  <div class="final-content">
+  <!-- Mensaje final — oculto hasta que el admin finalice -->
+  <div class="final-message" id="finalMessageAdmin">
     <p>
       Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
       no reconocen, con hojas que representan nuevos sueños y con la capacidad
       de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
       sino ayudarles a descubrir la fuerza que ya existe en su historia.
     </p>
-    <!-- Botón de mariposa para todos los participantes en la pantalla final -->
-    <button type="button" class="ghost final-butterfly-btn" id="butterflyBtnFinalParticipant">🦋 Soltar una mariposa</button>
+    <div class="final-admin-actions">
+      <button type="button" class="ghost" id="resetFromFinalBtn">↺ Reiniciar actividad</button>
+      <button type="button" class="ghost" id="butterflyBtnFinalAdmin">🦋 Mariposa</button>
+    </div>
   </div>
-
 </section>
 
 <script src="/socket.io/socket.io.js"></script>
