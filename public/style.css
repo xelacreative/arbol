@@ -275,45 +275,37 @@ button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B
 @keyframes fadeInFinal{ to{ opacity:1; } }
 
 /* =============================================================================
-MODO FINALIZADO — clase .finalized se aplica sobre la pantalla activa
-Oculta el árbol y muestra el mensaje final SIN cambiar de pantalla
+MODO FINALIZADO PARA ADMIN — se queda en su panel, solo oculta el árbol
 ============================================================================= */
-.screen.finalized .tree-header,
-.screen.finalized .stage-wrap,
-.screen.finalized .admin-stats,
-.screen.finalized .round-tabs,
-.screen.finalized .hint,
-.screen.finalized #participantControls,
-.screen.finalized .butterfly-row,
-.screen.finalized #finalizeBtn,
-.screen.finalized #closeRoundBtn {
+#screen-admin-panel.finalized .stage-wrap,
+#screen-admin-panel.finalized .admin-stats,
+#screen-admin-panel.finalized .round-tabs,
+#screen-admin-panel.finalized .hint,
+#screen-admin-panel.finalized #finalizeBtn,
+#screen-admin-panel.finalized #closeRoundBtn {
   display: none !important;
 }
 
-.final-message{
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:60px 32px 40px;
-  max-width:680px;
-  margin:0 auto;
-  min-height:70vh;
-  animation:fadeInFinal 2.2s ease forwards;
-}
-.final-message p{
-  font-size:19px;
-  line-height:1.8;
-  color:var(--text-brown);
-  font-weight:500;
-}
-.screen.finalized .final-message{
-  display:flex;
-}
-.screen.finalized{
-  background:#FFFFFF;
+.admin-final-message {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 32px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: 60vh;
+  animation: fadeInFinal 2.2s ease forwards;
 }
 
-/* Puedes eliminar todas las reglas de #screen-final, .final-admin-bar, 
-   .final-ambient, .final-content que ya no se usan */
+.admin-final-message p {
+  font-size: 19px;
+  line-height: 1.8;
+  color: var(--text-brown);
+  font-weight: 500;
+}
+
+#screen-admin-panel.finalized .admin-final-message {
+  display: flex;
+}
