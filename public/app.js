@@ -63,11 +63,24 @@ socket.on('admin:loginResult', (res) => {
   if (res.ok) {
     isAdmin = true;
     errorEl.classList.remove('show');
+    // Mostrar el botón de reinicio en la pantalla final por si el admin llega ahí
+    const resetFinalBtn = document.getElementById('resetFromFinalBtn');
+    if (resetFinalBtn) resetFinalBtn.style.display = 'inline-block';
     showScreen('adminPanel');
   } else {
     errorEl.classList.add('show');
   }
 });
+
+// Botón de reinicio desde pantalla final (solo admin)
+const resetFromFinalBtn = document.getElementById('resetFromFinalBtn');
+if (resetFromFinalBtn) {
+  resetFromFinalBtn.addEventListener('click', () => {
+    if (confirm('¿Reiniciar toda la actividad? Los participantes volverán al árbol.')) {
+      socket.emit('admin:reset');
+    }
+  });
+}
 
 /* ============================================================================
  * SINCRONIZACIÓN DE ESTADO GENERAL
@@ -79,7 +92,7 @@ socket.on('state:sync', (state) => {
   currentActiveRound = state.activeRound;
   mySubmittedRounds = [];
 
-  if (state.finalized) {
+  if (state.finalized && !isAdmin) {
     showScreen('final');
     return;
   }
@@ -89,6 +102,10 @@ socket.on('state:sync', (state) => {
   if (isAdmin) {
     showScreen('adminPanel');
     highlightActiveTab(state.activeRound);
+    document.getElementById('adminStatusMessage').textContent = 'Controla el orden de las rondas para los participantes.';
+  } else {
+    // Si estaban en la pantalla final (después de un reinicio del admin), vuelven al árbol
+    showScreen('tree');
   }
 });
 
@@ -178,7 +195,13 @@ function clearAllCards(){
  * PANTALLA FINAL
  * ========================================================================== */
 socket.on('state:finalized', () => {
-  showScreen('final');
+  // Los participantes van a la pantalla final.
+  // El admin se queda en su panel para poder reiniciar si lo necesita.
+  if (isAdmin) {
+    document.getElementById('adminStatusMessage').textContent = '✅ Experiencia finalizada — puedes reiniciar si lo necesitas.';
+  } else {
+    showScreen('final');
+  }
 });
 
 /* ============================================================================
