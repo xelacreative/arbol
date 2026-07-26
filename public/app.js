@@ -73,23 +73,20 @@ socket.on('admin:loginResult', (res) => {
     sessionStorage.setItem('isAdmin', 'true');
     document.getElementById('adminLoginError').classList.remove('show');
     
-    // Re-emit join con nombre opcional del admin
     const name = document.getElementById('adminNameInput').value.trim() || 'Facilitador';
     socket.emit('participant:join', { name });
     
-    // CORRECCIÓN: Si por condición de carrera ya estamos en la pantalla final, 
-    // mostramos la barra de admin explícitamente.
+    // CORRECCIÓN: Si ya estamos en pantalla final, mostrar la barra de admin
     if (screens.final.classList.contains('active')) {
       document.getElementById('finalAdminBar').style.display = 'flex';
     } else {
-      showScreen('adminPanel');
+      showAdminPanel();
     }
   } else {
     document.getElementById('adminLoginError').classList.add('show');
   }
 });
 
-/* Si tenía sesión de admin guardada y se reconecta, pide el estado actualizado */
 socket.on('connect', () => {
   if (isAdmin) {
     socket.emit('admin:login', { password: sessionStorage.getItem('adminPwd') || '' });
@@ -100,12 +97,12 @@ socket.on('connect', () => {
 MOSTRAR PANEL ADMIN
 ======================================================================== */
 function showAdminPanel() {
+  // CORRECCIÓN: NO tocar finalAdminBar aquí
   showScreen('adminPanel');
 }
 
 /* ==========================================================================
 SINCRONIZACIÓN DE ESTADO COMPLETO
-Llega al conectar, al hacer login y al reiniciar.
 ======================================================================== */
 socket.on('state:sync', (state) => {
   clearAllCards();
@@ -118,11 +115,10 @@ socket.on('state:sync', (state) => {
     return;
   }
   
-  // No está finalizado — cada quien va a su pantalla
   if (isAdmin) {
     document.getElementById('adminStatusMessage').textContent = 'Controla el orden de las rondas para los participantes.';
     highlightActiveTab(state.activeRound);
-    showScreen('adminPanel');
+    showAdminPanel();
   } else {
     updateRoundUI(state.activeRound, state.activeQuestion);
     showScreen('tree');
@@ -130,7 +126,7 @@ socket.on('state:sync', (state) => {
 });
 
 /* ==========================================================================
-CAMBIO DE RONDA — lo dispara el admin, llega a todos
+CAMBIO DE RONDA
 ======================================================================== */
 socket.on('round:changed', ({ round, question }) => {
   currentActiveRound = round;
@@ -184,7 +180,7 @@ function submitAnswer() {
 }
 
 /* ==========================================================================
-TARJETAS — renderizar en árbol del participante Y del admin
+TARJETAS
 ======================================================================== */
 socket.on('card:new', renderCard);
 
@@ -214,14 +210,12 @@ function clearAllCards() {
 
 /* ==========================================================================
 PANTALLA FINAL
-Todos van aquí al finalizar — participantes solo ven texto + mariposas.
-El admin ve además la barra de control fija arriba.
 ======================================================================== */
 function enterFinalScreen() {
-  // CORRECCIÓN: Verificar sesión de admin directamente en sessionStorage 
-  // para evitar condiciones de carrera con la variable isAdmin
-  const hasAdminSession = isAdmin || sessionStorage.getItem('adminPwd') !== null;
-  document.getElementById('finalAdminBar').style.display = hasAdminSession ? 'flex' : 'none';
+  // CORRECCIÓN: Verificar sesión de admin directamente en sessionStorage
+  const hasAdminSession = sessionStorage.getItem('adminPwd') !== null;
+  const bar = document.getElementById('finalAdminBar');
+  bar.style.display = hasAdminSession ? 'flex' : 'none';
   
   showScreen('final');
   startFinalAmbient();
@@ -231,7 +225,6 @@ socket.on('state:finalized', () => {
   enterFinalScreen();
 });
 
-/* Botones de la barra de admin en pantalla final */
 document.getElementById('resetFromFinalBtn').addEventListener('click', () => {
   if (confirm('¿Reiniciar toda la actividad? Los participantes volverán al árbol.')) {
     socket.emit('admin:reset');
@@ -247,7 +240,7 @@ document.getElementById('butterflyBtnFinalParticipant').addEventListener('click'
 });
 
 /* ==========================================================================
-PANEL ADMIN — botones de control
+PANEL ADMIN
 ======================================================================== */
 document.querySelectorAll('.tab').forEach((tab) => {
   tab.addEventListener('click', () => {
@@ -279,7 +272,6 @@ function highlightActiveTab(round) {
   });
 }
 
-/* Estadísticas en vivo */
 socket.on('admin:stats', (stats) => {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('statParticipants', stats.participantCount);
@@ -290,7 +282,7 @@ socket.on('admin:stats', (stats) => {
 });
 
 /* ==========================================================================
-MARIPOSAS — evento colectivo en tiempo real
+MARIPOSAS
 ======================================================================== */
 document.getElementById('butterflyBtn').addEventListener('click', () => {
   socket.emit('butterfly:spawn');
@@ -303,11 +295,11 @@ document.getElementById('butterflyBtnAdmin').addEventListener('click', () => {
 socket.on('butterfly:spawn', () => {
   spawnButterfly('stage', 'ambientLayer');
   spawnButterfly('stageAdmin', 'ambientLayerAdmin');
-  spawnButterflyFinal(); // También en la pantalla final si está activa
+  spawnButterflyFinal();
 });
 
 /* ==========================================================================
-CAPA AMBIENTAL — hojas cayendo y mariposas
+CAPA AMBIENTAL
 ======================================================================== */
 const leafEmojis = ['🍃', '🍂'];
 
@@ -316,7 +308,6 @@ function getSize(el) {
   return { w: r.width, h: r.height };
 }
 
-/* --- Hoja cayendo lenta dentro de un contenedor --- */
 function spawnFallingLeaf(stageId, layerId) {
   const stageEl = document.getElementById(stageId);
   const layer   = document.getElementById(layerId);
@@ -358,7 +349,6 @@ function spawnFallingLeaf(stageId, layerId) {
   requestAnimationFrame(frame);
 }
 
-/* --- Mariposa con vuelo, posada y salida --- */
 function spawnButterfly(stageId, layerId) {
   const stageEl = document.getElementById(stageId);
   const layer   = document.getElementById(layerId);
@@ -417,7 +407,6 @@ function spawnButterfly(stageId, layerId) {
   requestAnimationFrame(frame);
 }
 
-/* --- Mariposa en la pantalla final (usa toda la ventana) --- */
 function spawnButterflyFinal() {
   const layer = document.getElementById('finalAmbientLayer');
   if (!layer || !screens.final.classList.contains('active')) return;
@@ -479,14 +468,13 @@ function spawnButterflyFinal() {
 
 let finalAmbientInterval = null;
 function startFinalAmbient() {
-  if (finalAmbientInterval) return; // evitar duplicados
+  if (finalAmbientInterval) return;
   spawnButterflyFinal();
   finalAmbientInterval = setInterval(() => {
     if (Math.random() < 0.6) spawnButterflyFinal();
   }, 5000);
 }
 
-/* --- Loops automáticos sobre las pantallas del árbol --- */
 setInterval(() => {
   if (Math.random() < 0.7) {
     spawnFallingLeaf('stage', 'ambientLayer');
@@ -502,9 +490,7 @@ setInterval(() => {
 }, 6000);
 
 /* ==========================================================================
-SI YA ERA ADMIN AL CARGAR LA PÁGINA (sessionStorage)
-El servidor validará la clave guardada; si falla (server reiniciado),
-simplemente envía al landing para que haga login de nuevo.
+SI YA ERA ADMIN AL CARGAR
 ======================================================================== */
 if (isAdmin) {
   const savedPwd = sessionStorage.getItem('adminPwd');
@@ -517,7 +503,6 @@ if (isAdmin) {
   }
 }
 
-/* Guardar la clave al hacer login exitoso (captura antes del handler principal) */
 const origAdminLoginBtn = document.getElementById('adminLoginBtn');
 origAdminLoginBtn.addEventListener('click', () => {
   const pwd = document.getElementById('adminPasswordInput').value;
