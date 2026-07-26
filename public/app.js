@@ -26,53 +26,76 @@ const screens = {
 };
 
 function showScreen(name){
-  Object.values(screens).forEach(s => s.classList.remove('active'));
-  screens[name].classList.add('active');
+  Object.values(screens).forEach(s => {
+    if(s) s.classList.remove('active');
+  });
+  if(screens[name]) screens[name].classList.add('active');
 }
 
-let isAdmin = false;
+// 1. SOLUCIÓN: Persistimos el estado del admin en sessionStorage 
+// para que no se pierda si la página se recarga por accidente.
+let isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 let mySubmittedRounds = [];   // rondas que YA respondí (participante)
 let currentActiveRound = null;
 
 /* ============================================================================
  * LANDING — participante
  * ========================================================================== */
-document.getElementById('joinBtn').addEventListener('click', () => {
-  const name = document.getElementById('nameInput').value.trim();
-  socket.emit('participant:join', { name });
-  showScreen('tree');
-});
+const joinBtn = document.getElementById('joinBtn');
+if(joinBtn) {
+  joinBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // 2. SOLUCIÓN: Evita recarga si está en un form
+    const name = document.getElementById('nameInput').value.trim();
+    socket.emit('participant:join', { name });
+    showScreen('tree');
+  });
+}
 
-document.getElementById('showAdminLoginBtn').addEventListener('click', () => {
-  showScreen('adminLogin');
-});
-document.getElementById('backToLandingBtn').addEventListener('click', () => {
-  showScreen('landing');
-});
+const showAdminLoginBtn = document.getElementById('showAdminLoginBtn');
+if(showAdminLoginBtn) {
+  showAdminLoginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    showScreen('adminLogin');
+  });
+}
+
+const backToLandingBtn = document.getElementById('backToLandingBtn');
+if(backToLandingBtn) {
+  backToLandingBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    showScreen('landing');
+  });
+}
 
 /* ============================================================================
  * LOGIN ADMIN
  * ========================================================================== */
-document.getElementById('adminLoginBtn').addEventListener('click', () => {
-  const password = document.getElementById('adminPasswordInput').value;
-  socket.emit('admin:login', { password });
-});
+const adminLoginBtn = document.getElementById('adminLoginBtn');
+if(adminLoginBtn) {
+  adminLoginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const password = document.getElementById('adminPasswordInput').value;
+    socket.emit('admin:login', { password });
+  });
+}
 
 socket.on('admin:loginResult', (res) => {
   const errorEl = document.getElementById('adminLoginError');
   if (res.ok) {
     isAdmin = true;
-    errorEl.classList.remove('show');
+    sessionStorage.setItem('isAdmin', 'true'); // Guardar sesión de admin
+    if(errorEl) errorEl.classList.remove('show');
     showScreen('adminPanel');
   } else {
-    errorEl.classList.add('show');
+    if(errorEl) errorEl.classList.add('show');
   }
 });
 
 // Botón de reinicio desde pantalla final (por si un participante admin la ve)
 const resetFromFinalBtn = document.getElementById('resetFromFinalBtn');
 if (resetFromFinalBtn) {
-  resetFromFinalBtn.addEventListener('click', () => {
+  resetFromFinalBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     if (confirm('¿Reiniciar toda la actividad? Los participantes volverán al árbol.')) {
       socket.emit('admin:reset');
     }
@@ -89,9 +112,15 @@ socket.on('state:sync', (state) => {
   currentActiveRound = state.activeRound;
   mySubmittedRounds = [];
 
-  if (state.finalized && !isAdmin) {
-    showScreen('final');
-    return;
+  if (state.finalized) {
+    if (isAdmin) {
+      showScreen('adminPanel');
+      const msg = document.getElementById('adminStatusMessage');
+      if(msg) msg.textContent = '✅ Experiencia finalizada. Presiona Reiniciar para volver a empezar.';
+    } else {
+      showScreen('final');
+    }
+    return; // Evita que se siga ejecutando y sobreescriba el mensaje
   }
 
   updateRoundUI(state.activeRound, state.activeQuestion);
@@ -99,7 +128,8 @@ socket.on('state:sync', (state) => {
   if (isAdmin) {
     showScreen('adminPanel');
     highlightActiveTab(state.activeRound);
-    document.getElementById('adminStatusMessage').textContent = 'Controla el orden de las rondas para los participantes.';
+    const msg = document.getElementById('adminStatusMessage');
+    if(msg) msg.textContent = 'Controla el orden de las rondas para los participantes.';
   } else {
     // Si estaban en la pantalla final (después de un reinicio del admin), vuelven al árbol
     showScreen('tree');
@@ -122,6 +152,8 @@ function updateRoundUI(round, question){
   const sendBtn = document.getElementById('sendBtn');
   const textInput = document.getElementById('textInput');
 
+  if (!statusMsg || !controls) return;
+
   if (!round) {
     statusMsg.textContent = 'Esperando al facilitador...';
     controls.style.display = 'none';
@@ -136,22 +168,38 @@ function updateRoundUI(round, question){
 
   statusMsg.textContent = `Ronda activa: ${ROUND_LABELS[round]}`;
   controls.style.display = 'block';
-  questionEl.textContent = question;
-  sendBtn.disabled = false;
-  textInput.value = '';
-  textInput.focus();
+  if(questionEl) questionEl.textContent = question;
+  if(sendBtn) sendBtn.disabled = false;
+  if(textInput) {
+    textInput.value = '';
+    textInput.focus();
+  }
 }
 
 /* ============================================================================
  * ENVÍO DE RESPUESTA (participante)
  * ========================================================================== */
-document.getElementById('sendBtn').addEventListener('click', submitAnswer);
-document.getElementById('textInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') submitAnswer();
-});
+const sendBtn = document.getElementById('sendBtn');
+if(sendBtn) {
+  sendBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    submitAnswer();
+  });
+}
+
+const textInput = document.getElementById('textInput');
+if(textInput) {
+  textInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitAnswer();
+    }
+  });
+}
 
 function submitAnswer(){
   const input = document.getElementById('textInput');
+  if(!input) return;
   const text = input.value.trim();
   if (!text || !currentActiveRound) return;
 
@@ -162,7 +210,6 @@ function submitAnswer(){
 
 /* ============================================================================
  * TARJETA NUEVA — llega para TODOS (participantes y admin) al mismo tiempo
- * La posición ya viene calculada desde el servidor, así que solo se renderiza.
  * ========================================================================== */
 socket.on('card:new', (card) => {
   renderCard(card);
@@ -183,7 +230,8 @@ function renderCard(card){
 }
 
 function clearAllCards(){
-  document.getElementById('overlay').innerHTML = '';
+  const overlay = document.getElementById('overlay');
+  if(overlay) overlay.innerHTML = '';
   const overlayAdmin = document.getElementById('overlayAdmin');
   if (overlayAdmin) overlayAdmin.innerHTML = '';
 }
@@ -193,9 +241,8 @@ function clearAllCards(){
  * ========================================================================== */
 socket.on('state:finalized', () => {
   if (isAdmin) {
-    // El admin se queda en su panel — nunca va a la pantalla blanca final.
-    // Actualiza el mensaje de estado y asegura que el botón Reiniciar esté visible.
-    document.getElementById('adminStatusMessage').textContent = '✅ Experiencia finalizada. Presiona Reiniciar para volver a empezar.';
+    const msg = document.getElementById('adminStatusMessage');
+    if(msg) msg.textContent = '✅ Experiencia finalizada. Presiona Reiniciar para volver a empezar.';
     showScreen('adminPanel');
   } else {
     showScreen('final');
@@ -206,29 +253,41 @@ socket.on('state:finalized', () => {
  * PANEL DE ADMINISTRADOR — controles
  * ========================================================================== */
 document.querySelectorAll('.tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
     const round = tab.dataset.type;
-    // si ya estaba activa, la cerramos; si no, la activamos
     const newRound = (currentActiveRound === round) ? null : round;
     socket.emit('admin:setRound', { round: newRound });
   });
 });
 
-document.getElementById('closeRoundBtn').addEventListener('click', () => {
-  socket.emit('admin:setRound', { round: null });
-});
+const closeRoundBtn = document.getElementById('closeRoundBtn');
+if(closeRoundBtn) {
+  closeRoundBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    socket.emit('admin:setRound', { round: null });
+  });
+}
 
-document.getElementById('resetBtn').addEventListener('click', () => {
-  if (confirm('¿Reiniciar toda la actividad? Se borrarán todas las respuestas.')) {
-    socket.emit('admin:reset');
-  }
-});
+const resetBtn = document.getElementById('resetBtn');
+if(resetBtn) {
+  resetBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (confirm('¿Reiniciar toda la actividad? Se borrarán todas las respuestas.')) {
+      socket.emit('admin:reset');
+    }
+  });
+}
 
-document.getElementById('finalizeBtn').addEventListener('click', () => {
-  if (confirm('¿Finalizar la experiencia para todos los participantes?')) {
-    socket.emit('admin:finalize');
-  }
-});
+const finalizeBtn = document.getElementById('finalizeBtn');
+if(finalizeBtn) {
+  finalizeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (confirm('¿Finalizar la experiencia para todos los participantes?')) {
+      socket.emit('admin:finalize');
+    }
+  });
+}
 
 function highlightActiveTab(round){
   document.querySelectorAll('.tab').forEach((tab) => {
@@ -250,7 +309,6 @@ socket.on('admin:stats', (stats) => {
 
 /* ============================================================================
  * CAPA AMBIENTAL — hojas cayendo lentamente y mariposas que se posan
- * Se ejecuta sobre AMBOS escenarios (participante y admin) a la vez.
  * ========================================================================== */
 function getStageSize(stageEl){
   const r = stageEl.getBoundingClientRect();
@@ -275,7 +333,7 @@ function spawnFallingLeaf(stageId, layerId){
   const swaySpeed = 1.4 + Math.random() * 0.8;
   const startY = -20;
   const endY = sh + 20;
-  const duration = 9000 + Math.random() * 5000; // caída lenta: 9 a 14 segundos
+  const duration = 9000 + Math.random() * 5000; 
   const rotAmplitude = 12 + Math.random() * 8;
 
   let startTime = null;
@@ -359,26 +417,26 @@ function spawnButterfly(stageId, layerId){
   requestAnimationFrame(frame);
 }
 
-// Botón manual: cuando cualquiera suelta una mariposa, se avisa al servidor
-// para que la vean TODOS los conectados al mismo tiempo (participantes y admin).
 const butterflyBtn = document.getElementById('butterflyBtn');
 if (butterflyBtn) {
-  butterflyBtn.addEventListener('click', () => socket.emit('butterfly:spawn'));
+  butterflyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    socket.emit('butterfly:spawn');
+  });
 }
 const butterflyBtnAdmin = document.getElementById('butterflyBtnAdmin');
 if (butterflyBtnAdmin) {
-  butterflyBtnAdmin.addEventListener('click', () => socket.emit('butterfly:spawn'));
+  butterflyBtnAdmin.addEventListener('click', (e) => {
+    e.preventDefault();
+    socket.emit('butterfly:spawn');
+  });
 }
 
-// Cuando llega el evento (propio o de cualquier otro participante), se dibuja
-// la mariposa en el escenario que esté visible en esta pantalla.
 socket.on('butterfly:spawn', () => {
   spawnButterfly('stage', 'ambientLayer');
   spawnButterfly('stageAdmin', 'ambientLayerAdmin');
 });
 
-// Lanza hojas y mariposas periódicamente sobre cualquiera de los dos escenarios
-// que esté visible en este momento (participante o admin).
 setInterval(() => {
   if (Math.random() < 0.7) {
     spawnFallingLeaf('stage', 'ambientLayer');
