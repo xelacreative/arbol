@@ -275,70 +275,45 @@ button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B
 @keyframes fadeInFinal{ to{ opacity:1; } }
 
 /* =============================================================================
-   MODO FINALIZADO — se activa añadiendo .finalized a la pantalla activa.
-   El árbol y controles se ocultan; aparece el mensaje poético.
+MODO FINALIZADO — clase .finalized se aplica sobre la pantalla activa
+Oculta el árbol y muestra el mensaje final SIN cambiar de pantalla
 ============================================================================= */
+.screen.finalized .tree-header,
 .screen.finalized .stage-wrap,
 .screen.finalized .admin-stats,
 .screen.finalized .round-tabs,
 .screen.finalized .hint,
-.screen.finalized #finalizeBtn,
-.screen.finalized #closeRoundBtn,
 .screen.finalized #participantControls,
-.screen.finalized .butterfly-row {
+.screen.finalized .butterfly-row,
+.screen.finalized #finalizeBtn,
+.screen.finalized #closeRoundBtn {
   display: none !important;
 }
 
-.screen.finalized {
-  background: #FFFFFF;
+.final-message{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:60px 32px 40px;
+  max-width:680px;
+  margin:0 auto;
+  min-height:70vh;
+  animation:fadeInFinal 2.2s ease forwards;
+}
+.final-message p{
+  font-size:19px;
+  line-height:1.8;
+  color:var(--text-brown);
+  font-weight:500;
+}
+.screen.finalized .final-message{
+  display:flex;
+}
+.screen.finalized{
+  background:#FFFFFF;
 }
 
-/* El mensaje final está oculto por defecto y solo aparece en modo finalizado */
-.final-message {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px 32px 40px;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.screen.finalized .final-message {
-  display: flex;
-  animation: fadeInFinal 2.2s ease forwards;
-  opacity: 0;
-}
-
-.final-message p {
-  font-size: 19px;
-  line-height: 1.8;
-  color: var(--text-brown);
-  font-weight: 500;
-}
-
-.final-butterfly-btn,
-.final-admin-actions .ghost {
-  margin-top: 28px;
-  border-color: rgba(74,58,34,0.3);
-  color: var(--text-mute);
-}
-.final-butterfly-btn:hover,
-.final-admin-actions .ghost:hover {
-  color: var(--text-brown);
-  border-color: rgba(74,58,34,0.6);
-}
-
-.final-admin-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 28px;
-}
-
-@keyframes fadeInFinal { to { opacity: 1; } }
-
-/* Eliminar sección final separada ya no existe — estas reglas la reemplazán */
-#screen-final { display: none !important; }
+/* Puedes eliminar todas las reglas de #screen-final, .final-admin-bar, 
+   .final-ambient, .final-content que ya no se usan */
