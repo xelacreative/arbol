@@ -256,6 +256,17 @@ io.on('connection', (socket) => {
     io.emit('butterfly:spawn');
   });
 
+  // ---- Admin muestra/oculta el mensaje de despedida a todos ----
+  socket.on('farewell:show', () => {
+    if (!socket.data.isAdmin) return;
+    io.emit('farewell:show');
+  });
+
+  socket.on('farewell:hide', () => {
+    if (!socket.data.isAdmin) return;
+    io.emit('farewell:hide');
+  });
+
   // ---- Limpieza al desconectar ----
   socket.on('disconnect', () => {
     delete state.participants[socket.id];
