@@ -275,18 +275,26 @@ button.ghost.danger:hover{ background:rgba(192,57,43,0.08); border-color:#C0392B
 @keyframes fadeInFinal{ to{ opacity:1; } }
 
 /* =============================================================================
-MODO FINALIZADO PARA ADMIN — se queda en su panel, solo oculta el árbol
+   MODO FINALIZADO — se activa añadiendo .finalized a la pantalla activa.
+   El árbol y controles se ocultan; aparece el mensaje poético.
 ============================================================================= */
-#screen-admin-panel.finalized .stage-wrap,
-#screen-admin-panel.finalized .admin-stats,
-#screen-admin-panel.finalized .round-tabs,
-#screen-admin-panel.finalized .hint,
-#screen-admin-panel.finalized #finalizeBtn,
-#screen-admin-panel.finalized #closeRoundBtn {
+.screen.finalized .stage-wrap,
+.screen.finalized .admin-stats,
+.screen.finalized .round-tabs,
+.screen.finalized .hint,
+.screen.finalized #finalizeBtn,
+.screen.finalized #closeRoundBtn,
+.screen.finalized #participantControls,
+.screen.finalized .butterfly-row {
   display: none !important;
 }
 
-.admin-final-message {
+.screen.finalized {
+  background: #FFFFFF;
+}
+
+/* El mensaje final está oculto por defecto y solo aparece en modo finalizado */
+.final-message {
   display: none;
   flex-direction: column;
   align-items: center;
@@ -295,17 +303,110 @@ MODO FINALIZADO PARA ADMIN — se queda en su panel, solo oculta el árbol
   padding: 60px 32px 40px;
   max-width: 680px;
   margin: 0 auto;
-  min-height: 60vh;
-  animation: fadeInFinal 2.2s ease forwards;
 }
 
-.admin-final-message p {
+.screen.finalized .final-message {
+  display: flex;
+  animation: fadeInFinal 2.2s ease forwards;
+  opacity: 0;
+}
+
+.final-message p {
   font-size: 19px;
   line-height: 1.8;
   color: var(--text-brown);
   font-weight: 500;
 }
 
-#screen-admin-panel.finalized .admin-final-message {
+.final-butterfly-btn,
+.final-admin-actions .ghost {
+  margin-top: 28px;
+  border-color: rgba(74,58,34,0.3);
+  color: var(--text-mute);
+}
+.final-butterfly-btn:hover,
+.final-admin-actions .ghost:hover {
+  color: var(--text-brown);
+  border-color: rgba(74,58,34,0.6);
+}
+
+.final-admin-actions {
   display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+@keyframes fadeInFinal { to { opacity: 1; } }
+
+/* Eliminar sección final separada ya no existe — estas reglas la reemplazán */
+#screen-final { display: none !important; }
+
+/* =============================================================================
+   OVERLAY MENSAJE DE DESPEDIDA
+   Capa fija encima de todo. No toca el árbol ni ninguna pantalla.
+============================================================================= */
+.farewell-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(243, 236, 221, 0.35);
+  backdrop-filter: blur(3px);
+  animation: farewellFadeIn 0.6s ease forwards;
+  opacity: 0;
+}
+@keyframes farewellFadeIn { to { opacity: 1; } }
+
+.farewell-box {
+  background: #FFFFFF;
+  width: 100%;            /* completo a los lados */
+  min-height: 55vh;       /* más de la mitad de la pantalla de arriba a abajo */
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 40px;
+  box-shadow: 0 -8px 40px rgba(74,58,34,0.18), 0 8px 40px rgba(74,58,34,0.18);
+  overflow-y: auto;
+}
+
+.farewell-box p {
+  font-size: clamp(16px, 2.4vw, 22px);
+  line-height: 1.85;
+  color: #000000;
+  font-weight: 500;
+  text-align: center;
+  max-width: 720px;
+  animation: farewellTextIn 1.4s ease forwards;
+  opacity: 0;
+}
+@keyframes farewellTextIn {
+  0%  { opacity: 0; transform: translateY(12px); }
+  100%{ opacity: 1; transform: translateY(0); }
+}
+
+.farewell-close {
+  margin-top: 32px;
+  border-color: rgba(0,0,0,0.2);
+  color: rgba(0,0,0,0.45);
+  font-size: 12px;
+}
+.farewell-close:hover {
+  color: #000;
+  border-color: rgba(0,0,0,0.5);
+}
+
+/* Botón del panel admin */
+button.ghost.farewell {
+  border-color: rgba(74,58,34,0.5);
+  color: var(--text-brown);
+  font-weight: 700;
+}
+button.ghost.farewell:hover {
+  background: rgba(74,58,34,0.08);
 }
