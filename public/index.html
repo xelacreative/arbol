@@ -55,8 +55,7 @@
   <div class="butterfly-row">
     <button type="button" class="ghost" id="butterflyBtn">🦋 Soltar una mariposa</button>
   </div>
-
-  <!-- MENSAJE FINAL (se muestra sobre el árbol cuando se finaliza) -->
+  <!-- Mensaje final — oculto hasta que el admin finalice -->
   <div class="final-message" id="finalMessageTree">
     <p>
       Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
@@ -64,7 +63,7 @@
       de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
       sino ayudarles a descubrir la fuerza que ya existe en su historia.
     </p>
-    <button type="button" class="ghost final-butterfly-btn" id="butterflyBtnFinalParticipant">🦋 Soltar una mariposa</button>
+    <button type="button" class="ghost final-butterfly-btn" id="butterflyBtnTree">🦋 Soltar una mariposa</button>
   </div>
 </section>
 
@@ -100,18 +99,41 @@
       <button type="button" class="ghost" id="closeRoundBtn">Cerrar ronda</button>
       <button type="button" class="ghost" id="butterflyBtnAdmin">🦋 Mariposa</button>
       <button type="button" class="ghost danger" id="resetBtn">Reiniciar</button>
+      <button type="button" class="ghost farewell" id="farewellBtn">💬 Mensaje de despedida</button>
       <button type="button" class="btn-primary small" id="finalizeBtn">Finalizar</button>
     </div>
   </div>
+  <!-- Mensaje final — oculto hasta que el admin finalice -->
+  <div class="final-message" id="finalMessageAdmin">
+    <p>
+      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
+      no reconocen, con hojas que representan nuevos sueños y con la capacidad
+      de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
+      sino ayudarles a descubrir la fuerza que ya existe en su historia.
+    </p>
+    <div class="final-admin-actions">
+      <button type="button" class="ghost" id="resetFromFinalBtn">↺ Reiniciar actividad</button>
+      <button type="button" class="ghost" id="butterflyBtnFinalAdmin">🦋 Mariposa</button>
+    </div>
+  </div>
+</section>
 
-<!-- Mensaje final que aparece cuando se finaliza (solo para admin) -->
-<div class="admin-final-message" id="adminFinalMessage">
-  <p>
-    Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
-    no reconocen, con hojas que representan nuevos sueños y con la capacidad
-    de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
-    sino ayudarles a descubrir la fuerza que ya existe en su historia.
-  </p>
+<!-- ======================= OVERLAY: MENSAJE DE DESPEDIDA ======================= -->
+<!-- Aparece encima de TODO al presionar el botón del admin.
+     No borra ni mueve nada — es una capa fija encima. -->
+<div id="farewellOverlay" class="farewell-overlay" style="display:none;">
+  <div class="farewell-box">
+    <p>
+      Las familias no llegan vacías. Llegan con raíces, con frutos que a veces
+      no reconocen, con hojas que representan nuevos sueños y con la capacidad
+      de seguir creciendo. Nuestra tarea no es construir el árbol por ellas,
+      sino ayudarles a descubrir la fuerza que ya existe en su historia.
+    </p>
+    <!-- Solo el admin ve este botón de cerrar -->
+    <button type="button" class="ghost farewell-close" id="farewellCloseBtn" style="display:none;">
+      ✕ Cerrar mensaje
+    </button>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
